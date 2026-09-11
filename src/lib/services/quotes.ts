@@ -1,0 +1,156 @@
+/**
+ * Quotes service — async, backed by the client store.
+ * `convertQuoteToBooking` is the heart of the demo workflow: a quote becomes a
+ * booking, the lead moves to BOOKED and matching hire stock is reserved.
+ */
+import { useStore } from "~/lib/store";
+import { delay, todayISO, uid } from "~/lib/util";
+import type { Booking, Quote, QuoteItem, QuoteService, QuoteStatus } from "~/lib/types";
+import { createBooking } from "./bookings";
+import { reserveInventory } from "./inventory";
+import { demoQuoteServices } from "~/lib/data/quoteServices";
+
+export interface QuoteLineInput {
+  type: QuoteItem["type"];
+  refId: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface QuoteDraft {
+  leadId: string;
+  customerId: string;
+  items: QuoteLineInput[];
+  deliveryFee?: number;
+  /** Flat setup fee — shown as its own totals row on the quote. */
+  setupFee?: number;
+  discount?: number;
+  notes?: string;
+  validUntil?: string;
+}
+
+/** Read-only catalogue for the quote builder's services panel. */
+export async function getQuoteServices(): Promise<QuoteService[]> {
+  await delay(200);
+  return demoQuoteServices;
+}
+
+export async function createQuote(draft: QuoteDraft): Promise<Quote> {
+  await delay();
+  const items: QuoteItem[] = draft.items.map((line) => ({
+    id: uid("QI"),
+    type: line.type,
+    refId: line.refId,
+    name: line.name,
+    quantity: line.quantity,
+    unitPrice: line.unitPrice,
+    lineTotal: line.quantity * line.unitPrice,
+  }));
+  const subtotal = items.reduce((sum, i) => sum + i.lineTotal, 0);
+  const deliveryFee = draft.deliveryFee ?? 0;
+  const setupFee = draft.setupFee ?? 0;
+  const discount = draft.discount ?? 0;
+  const quote: Quote = {
+    id: uid("Q"),
+    leadId: draft.leadId,
+    customerId: draft.customerId,
+    items,
+    subtotal,
+    deliveryFee,
+    setupFee,
+    discount,
+    total: subtotal + deliveryFee + setupFee - discount,
+    status: "DRAFT",
+    notes: draft.notes,
+    validUntil: draft.validUntil,
+    createdAt: todayISO(),
+    isDemo: false,
+  };
+  useStore.getState().addQuote(quote);
+  // ⚠️ RESEND NOTE: when real email is added, sending the quote document to the
+  // customer happens HERE via a server-side createServerFn / api route that
+  // calls Resend with the recipient address — never from the frontend (it would
+  // leak the API key). `quote` is the exact payload to render.
+  return quote;
+}
+
+export async function getQuotes(): Promise<Quote[]> {
+  await delay();
+  return useStore.getState().quotes;
+}
+
+export async function getQuoteById(id: string): Promise<Quote | null> {
+  await delay(200);
+  return useStore.getState().quotes.find((q) => q.id === id) ?? null;
+}
+
+export async function updateQuoteStatus(id: string, status: QuoteStatus): Promise<Quote> {
+  await delay(250);
+  const state = useStore.getState();
+  const quote = state.quotes.find((q) => q.id === id);
+  if (!quote) throw new Error(`Quote not found: ${id}`);
+  state.updateQuote(id, { status });
+  return { ...quote, status };
+}
+
+/**
+ * Convert an accepted quote into a booking:
+ * 1. build the booking from the quote (deposit captured later by the user),
+ * 2. mark the quote ACCEPTED and the lead BOOKED,
+ * 3. reserve warehouse stock for every product line on the quote.
+ */
+export async function convertQuoteToBooking(quoteId: string): Promise<Booking> {
+  await delay(400);
+  const state = useStore.getState();
+  const quote = state.quotes.find((q) => q.id === quoteId);
+  if (!quote) throw new Error(`Quote not found: ${quoteId}`);
+
+  const lead = state.leads.find((l) => l.id === quote.leadId);
+
+  // Reserve stock for product lines. Products and inventory items share names
+  // (see lib/data), so we can match by name. Items with no warehouse record
+  // (e.g. services) are skipped. A line that can't be fully reserved is
+  // reported rather than failing the whole conversion — the booking still
+  // stands and the business sources more stock.
+  const unavailable: string[] = [];
+  for (const line of quote.items) {
+    if (line.type !== "product") continue;
+    const inventoryItem = state.inventory.find((i) => i.name === line.name);
+    if (inventoryItem) {
+      try {
+        await reserveInventory(inventoryItem.id, line.quantity);
+      } catch {
+        unavailable.push(
+          `${line.name} (needed ${line.quantity}, short on available stock)`
+        );
+      }
+    }
+  }
+  const reservationNote =
+    unavailable.length > 0
+      ? `⚠ Could not reserve: ${unavailable.join("; ")}.`
+      : undefined;
+
+  const booking = await createBooking({
+    quoteId: quote.id,
+    leadId: quote.leadId,
+    customerId: quote.customerId,
+    eventName: lead ? `${lead.customer.name} Event` : "Event",
+    eventType: lead?.eventType ?? "other",
+    eventDate: lead?.eventDate ?? todayISO(),
+    venue: lead?.venue ?? lead?.customer.location ?? "TBC",
+    guests: lead?.guests ?? 0,
+    totalAmount: quote.total,
+    depositPaid: 0,
+    balanceDue: quote.total,
+    notes: reservationNote
+      ? [quote.notes, reservationNote].filter(Boolean).join("\n")
+      : quote.notes,
+  });
+
+  state.updateQuote(quote.id, { status: "ACCEPTED" });
+  if (lead) state.updateLead(lead.id, { status: "BOOKED" });
+
+  return booking;
+}

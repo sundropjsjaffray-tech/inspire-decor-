@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/*
+ * INSPIRE DECOR design tokens — premium event aesthetic:
+ * deep charcoal/ink + champagne gold palette, Playfair Display for display,
+ * Inter for body text. Tailwind v4 generates utilities from these variables
+ * (e.g. bg-ink-900, text-gold-500, font-display).
+ */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+
+  /* Ink — deep warm charcoal/navy neutrals */
+  --color-ink-50: #f6f7f9;
+  --color-ink-100: #eaecf0;
+  --color-ink-200: #d2d6de;
+  --color-ink-300: #a6adba;
+  --color-ink-400: #7c8494;
+  --color-ink-500: #555d6b;
+  --color-ink-600: #3d434f;
+  --color-ink-700: #2e333d;
+  --color-ink-800: #22262e;
+  --color-ink-900: #171a20;
+  --color-ink-950: #101216;
+
+  /* Gold — champagne accent */
+  --color-gold-50: #fbf7ee;
+  --color-gold-100: #f6ecda;
+  --color-gold-200: #ecd9b0;
+  --color-gold-300: #dcc084;
+  --color-gold-400: #c9a75c;
+  --color-gold-500: #b8954a;
+  --color-gold-600: #9a7a2f;
+  --color-gold-700: #7d6124;
+  --color-gold-800: #5f491d;
+
+  /* Champagne — warm cream background family */
+  --color-champagne-100: #faf6ee;
+  --color-champagne-200: #f5ecdc;
+  --color-champagne-300: #eedfc4;
+  --color-champagne-400: #e3cdab;
+  --color-champagne-500: #d6b98a;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-white font-sans text-ink-800 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display;
+  }
+
+  ::selection {
+    @apply bg-gold-200 text-ink-900;
+  }
+}

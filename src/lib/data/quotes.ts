@@ -1,0 +1,117 @@
+/**
+ * Demo quotes (isDemo: true). Q-1001 (180-guest matric farewell) is linked to
+ * booking B-1001 so the two views reconcile. lineTotals are pre-computed here;
+ * the service layer (`~/lib/services/quotes.ts`) computes them for new quotes.
+ */
+import type { Quote, QuoteItem } from "~/lib/types";
+import { isoDaysFromNow } from "~/lib/util";
+
+const item = (
+  id: string,
+  type: QuoteItem["type"],
+  refId: string,
+  name: string,
+  quantity: number,
+  unitPrice: number
+): QuoteItem => ({ id, type, refId, name, quantity, unitPrice, lineTotal: quantity * unitPrice });
+
+export const demoQuotes: Quote[] = [
+  {
+    id: "Q-1001",
+    leadId: "L-1005",
+    customerId: "C-1005",
+    items: [
+      item("QI-101", "product", "p-dinner-plate", "Dinner Plate", 180, 28),
+      item("QI-102", "product", "p-wine-glass", "Wine Glass", 180, 18),
+      item("QI-103", "product", "p-fork", "Fork", 180, 8),
+      item("QI-104", "product", "p-knife", "Knife", 180, 8),
+      item("QI-105", "product", "p-spoon", "Spoon", 180, 8),
+      item("QI-106", "product", "p-chair-cover", "Chair Cover", 180, 22),
+      item("QI-107", "product", "p-napkin", "Napkin", 180, 12),
+      item("QI-108", "product", "p-tablecloth", "Tablecloth", 30, 150),
+      item("QI-109", "service", "table-styling", "Table Styling", 1, 1500),
+    ],
+    subtotal: 24720,
+    deliveryFee: 1680,
+    discount: 0,
+    total: 26400,
+    status: "SENT",
+    notes: "Matric farewell package — champagne and dessert colours.",
+    validUntil: isoDaysFromNow(14),
+    createdAt: isoDaysFromNow(-6),
+    isDemo: true,
+  },
+  {
+    id: "Q-1002",
+    leadId: "L-1004",
+    customerId: "C-1004",
+    items: [
+      item("QI-201", "product", "p-banquet-table", "Banquet Table", 40, 150),
+      item("QI-202", "product", "p-round-table", "Round Table", 20, 250),
+      item("QI-203", "product", "p-banquet-chair", "Banquet Chair", 250, 45),
+      item("QI-204", "product", "p-tablecloth", "Tablecloth", 40, 150),
+      item("QI-205", "product", "p-drape-fabric", "Drape Fabric", 300, 45),
+      item("QI-206", "product", "p-fabric-backdrop", "Fabric Backdrop", 2, 650),
+      item("QI-207", "service", "corporate", "Corporate Events", 1, 10000),
+    ],
+    subtotal: 53050,
+    deliveryFee: 2500,
+    discount: 0,
+    total: 55550,
+    status: "DRAFT",
+    notes: "Draft — awaiting client confirmation on colour scheme.",
+    validUntil: isoDaysFromNow(21),
+    createdAt: isoDaysFromNow(-3),
+    isDemo: true,
+  },
+  {
+    id: "Q-1003",
+    leadId: "L-1002",
+    customerId: "C-1002",
+    items: [
+      item("QI-301", "product", "p-dinner-plate", "Dinner Plate", 120, 28),
+      item("QI-302", "product", "p-side-plate", "Side Plate", 120, 18),
+      item("QI-303", "product", "p-wine-glass", "Wine Glass", 120, 18),
+      item("QI-304", "product", "p-champagne-glass", "Champagne Glass", 60, 20),
+      item("QI-305", "product", "p-fork", "Fork", 120, 8),
+      item("QI-306", "product", "p-knife", "Knife", 120, 8),
+      item("QI-307", "product", "p-spoon", "Spoon", 120, 8),
+      item("QI-308", "product", "p-chair-cover", "Chair Cover", 120, 22),
+      item("QI-309", "product", "p-tablecloth", "Tablecloth", 24, 150),
+      item("QI-310", "product", "p-napkin", "Napkin", 120, 12),
+      item("QI-311", "product", "p-floral-centrepiece", "Floral Centrepiece", 12, 180),
+      item("QI-312", "service", "full-setup", "Full Event Setup", 1, 15000),
+    ],
+    subtotal: 36600,
+    deliveryFee: 1900,
+    discount: 0,
+    total: 38500,
+    status: "SENT",
+    notes: "White-and-blush wedding package at The Ridge.",
+    validUntil: isoDaysFromNow(14),
+    createdAt: isoDaysFromNow(-8),
+    isDemo: true,
+  },
+  {
+    id: "Q-1004",
+    leadId: "L-1008",
+    customerId: "C-1008",
+    items: [
+      item("QI-401", "product", "p-floral-wall-panel", "Floral Wall Panel", 8, 450),
+      item("QI-402", "product", "p-fabric-backdrop", "Fabric Backdrop", 2, 650),
+      item("QI-403", "product", "p-led-candle", "LED Candle", 50, 35),
+      item("QI-404", "product", "p-cocktail-table", "Cocktail Table", 15, 120),
+      item("QI-405", "product", "p-folding-chair", "Folding Chair", 100, 25),
+      item("QI-406", "product", "p-chafing-dish", "Chafing Dish", 10, 120),
+      item("QI-407", "product", "p-tablecloth", "Tablecloth", 20, 150),
+    ],
+    subtotal: 15150,
+    deliveryFee: 1800,
+    discount: 0,
+    total: 16950,
+    status: "DECLINED",
+    notes: "Client chose another supplier.",
+    createdAt: isoDaysFromNow(-20),
+    isDemo: true,
+  },
+];

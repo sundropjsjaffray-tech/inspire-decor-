@@ -1,0 +1,95 @@
+const leadStatusMeta = {
+  NEW: { label: "New", tone: "info" },
+  QUALIFIED: { label: "Qualified", tone: "gold" },
+  QUOTE_SENT: { label: "Quote Sent", tone: "warning" },
+  FOLLOW_UP: { label: "Follow-up", tone: "warning" },
+  BOOKED: { label: "Booked", tone: "success" },
+  LOST: { label: "Lost", tone: "danger" }
+};
+const quoteStatusMeta = {
+  DRAFT: { label: "Draft", tone: "neutral" },
+  SENT: { label: "Sent", tone: "warning" },
+  ACCEPTED: { label: "Accepted", tone: "success" },
+  DECLINED: { label: "Declined", tone: "danger" },
+  EXPIRED: { label: "Expired", tone: "neutral" }
+};
+const bookingStatusMeta = {
+  QUOTE: { label: "Quote", tone: "neutral" },
+  AWAITING_DEPOSIT: { label: "Awaiting Deposit", tone: "warning" },
+  CONFIRMED: { label: "Confirmed", tone: "info" },
+  PREPARING: { label: "Preparing", tone: "gold" },
+  OUT_ON_HIRE: { label: "Out on Hire", tone: "warning" },
+  COMPLETED: { label: "Completed", tone: "success" },
+  CANCELLED: { label: "Cancelled", tone: "danger" }
+};
+const eventStatusMeta = {
+  ENQUIRY: { label: "Enquiry", tone: "neutral" },
+  QUOTED: { label: "Quoted", tone: "warning" },
+  CONFIRMED: { label: "Confirmed", tone: "info" },
+  PREPARING: { label: "Preparing", tone: "gold" },
+  IN_PROGRESS: { label: "In Progress", tone: "warning" },
+  COMPLETED: { label: "Completed", tone: "success" },
+  CANCELLED: { label: "Cancelled", tone: "danger" }
+};
+const eventTypeLabels = {
+  wedding: "Wedding",
+  matricFarewell: "Matric Farewell",
+  birthday: "Birthday",
+  babyShower: "Baby Shower",
+  bridalShower: "Bridal Shower",
+  privateCelebration: "Private Celebration",
+  funeral: "Funeral",
+  corporate: "Corporate Event",
+  engagement: "Engagement",
+  christening: "Christening",
+  productLaunch: "Product Launch",
+  awards: "Awards Evening",
+  conference: "Conference",
+  networking: "Networking",
+  intimate: "Intimate Event",
+  consultation: "Consultation",
+  other: "Other"
+};
+const budgetRangeLabels = {
+  "under-2k": "Under R2,000",
+  "2k-5k": "R2,000 – R5,000",
+  "5k-10k": "R5,000 – R10,000",
+  "10k-20k": "R10,000 – R20,000",
+  "20k-plus": "R20,000+",
+  "under-15k": "Under R15,000",
+  "15k-30k": "R15,000 – R30,000",
+  "30k-60k": "R30,000 – R60,000",
+  "60k-100k": "R60,000 – R100,000",
+  "100k-plus": "R100,000+",
+  "not-sure": "Not sure yet"
+};
+const serviceOptionLabels = {
+  "full-setup": "Full Event Setup",
+  draping: "Draping",
+  "table-styling": "Table Styling",
+  floral: "Floral Décor",
+  backdrops: "Backdrops",
+  crockery: "Crockery",
+  linen: "Linen",
+  corporate: "Corporate Events",
+  intimate: "Intimate Events",
+  delivery: "Delivery",
+  "equipment-hire": "Equipment Hire",
+  cutlery: "Cutlery",
+  glassware: "Glassware",
+  tables: "Tables",
+  chairs: "Chairs",
+  backdrop: "Backdrop",
+  centrepieces: "Centrepieces",
+  flowers: "Flowers",
+  collection: "Collection"
+};
+export {
+  eventStatusMeta as a,
+  budgetRangeLabels as b,
+  bookingStatusMeta as c,
+  eventTypeLabels as e,
+  leadStatusMeta as l,
+  quoteStatusMeta as q,
+  serviceOptionLabels as s
+};

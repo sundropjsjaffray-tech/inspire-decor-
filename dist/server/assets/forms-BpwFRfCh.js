@@ -1,0 +1,47 @@
+const quoteEventTypeOptions = [
+  { value: "wedding", label: "Wedding" },
+  { value: "birthday", label: "Birthday" },
+  { value: "matricFarewell", label: "Matric Farewell" },
+  { value: "babyShower", label: "Baby Shower" },
+  { value: "bridalShower", label: "Bridal Shower" },
+  { value: "corporate", label: "Corporate Event" },
+  { value: "conference", label: "Conference" },
+  { value: "privateCelebration", label: "Private Celebration" },
+  { value: "funeral", label: "Funeral" },
+  { value: "other", label: "Other" }
+];
+const quoteBudgetOptions = [
+  { value: "under-2k", label: "Under R2,000" },
+  { value: "2k-5k", label: "R2,000 – R5,000" },
+  { value: "5k-10k", label: "R5,000 – R10,000" },
+  { value: "10k-20k", label: "R10,000 – R20,000" },
+  { value: "20k-plus", label: "R20,000+" }
+];
+const quoteServiceOptions = [
+  { value: "equipment-hire", label: "Equipment Hire" },
+  { value: "crockery", label: "Crockery" },
+  { value: "cutlery", label: "Cutlery" },
+  { value: "glassware", label: "Glassware" },
+  { value: "tables", label: "Tables" },
+  { value: "chairs", label: "Chairs" },
+  { value: "linen", label: "Linen" },
+  { value: "draping", label: "Draping" },
+  { value: "backdrop", label: "Backdrop" },
+  { value: "centrepieces", label: "Centrepieces" },
+  { value: "flowers", label: "Flowers" },
+  { value: "full-setup", label: "Full Event Setup" },
+  { value: "delivery", label: "Delivery" },
+  { value: "collection", label: "Collection" }
+];
+const venueTypeOptions = [
+  { value: "indoor", label: "Indoor" },
+  { value: "outdoor", label: "Outdoor" },
+  { value: "both", label: "Indoor & outdoor" },
+  { value: "undecided", label: "Not sure yet" }
+];
+export {
+  quoteServiceOptions as a,
+  quoteBudgetOptions as b,
+  quoteEventTypeOptions as q,
+  venueTypeOptions as v
+};
