@@ -112,7 +112,7 @@ from the frontend (API key leak). Keep the same signatures.
 ## Commands
 
 - `bun run dev` — dev server on port 3000
-- `bun run preview` — preview the production build on port 4173
+- `bun run preview` — preview the production build on port 4174
 - `bun run build` — production build
 - `bun run publish` / `bun run go-live` — publishing (hosting setup untouched)
 - `bunx tsc --noEmit` — full TypeScript check

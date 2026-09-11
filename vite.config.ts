@@ -30,7 +30,7 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 4173,
+    port: 4174,
     host: true,
   },
   plugins: [
