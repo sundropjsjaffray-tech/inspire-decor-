@@ -96,7 +96,7 @@ function CorporatePage() {
           email: form.email.trim(),
           phone: form.phone.trim(),
           company: form.company.trim(),
-          location: "Gauteng",
+          location: "Port Elizabeth, Eastern Cape",
           createdAt: todayISO(),
         },
         eventType: "corporate",

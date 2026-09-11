@@ -75,7 +75,7 @@ function HomePage() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-champagne-100/90 sm:text-lg">
             Event décor, draping, crockery, glassware, linen, backdrops and table styling — plus full
-            event setup and complete corporate event solutions, delivered across Gauteng by one team
+            event setup and complete corporate event solutions, delivered across Port Elizabeth, Eastern Cape by one team
             you can rely on.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">

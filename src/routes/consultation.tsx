@@ -82,7 +82,7 @@ function ConsultationPage() {
           name: form.name.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
-          location: "Gauteng",
+          location: "Port Elizabeth, Eastern Cape",
           createdAt: todayISO(),
         },
         eventType: "consultation",

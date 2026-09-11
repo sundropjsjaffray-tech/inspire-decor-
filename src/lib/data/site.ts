@@ -19,8 +19,8 @@ export const demoContactDetails: ContactDetails = {
   phone: "+27 82 555 0100",
   whatsapp: "+27 82 555 0100",
   email: "hello@inspiredecor.co.za",
-  area: "Midrand, Gauteng",
-  serviceRegion: "Serving Gauteng and surrounds — Johannesburg, Pretoria, Midrand, Centurion and the East Rand.",
+  area: "Port Elizabeth, Eastern Cape",
+  serviceRegion: "Serving Port Elizabeth, Eastern Cape.",
   hours: [
     { days: "Monday – Friday", time: "08:00 – 17:00" },
     { days: "Saturday", time: "08:00 – 14:00" },

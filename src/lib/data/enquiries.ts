@@ -68,7 +68,7 @@ export const demoEnquiries: Enquiry[] = [
     eventType: "birthday",
     eventDate: isoDaysFromNow(20),
     guests: 50,
-    venue: "Home garden, Midrand",
+    venue: "Home garden, Port Elizabeth, Eastern Cape",
     budgetRange: "15k-30k",
     services: ["intimate", "crockery", "delivery"],
     message:

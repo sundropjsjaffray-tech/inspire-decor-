@@ -17,7 +17,7 @@ const customer = (
   name,
   email,
   phone,
-  location: "Gauteng",
+  location: "Port Elizabeth, Eastern Cape",
   createdAt: isoDaysFromNow(-14),
   ...extra,
 });
@@ -59,7 +59,7 @@ export const demoEvents: Event[] = [
     customer: customer("C-1003", "Naledi Dlamini", "naledi.dlamini@gmail.com", "+27 83 555 0155"),
     date: isoDaysFromNow(20),
     type: "birthday",
-    venue: "Home garden, Midrand",
+    venue: "Home garden, Port Elizabeth, Eastern Cape",
     guests: 50,
     setupTime: "10:00",
     eventTime: "14:00",

@@ -29,6 +29,10 @@ export default defineConfig({
       deny: [".env", ".env.*", "*.{crt,pem,key}", "**/.run/**", "**/.git/**"],
     },
   },
+  preview: {
+    port: 4173,
+    host: true,
+  },
   plugins: [
     tailwindcss(),
     tsConfigPaths({

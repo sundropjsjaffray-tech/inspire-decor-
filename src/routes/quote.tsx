@@ -194,7 +194,7 @@ function QuotePage() {
           email: form.email.trim(),
           phone: form.phone.trim(),
           company: form.company.trim() || undefined,
-          location: form.location.trim() || "Gauteng",
+          location: form.location.trim() || "Port Elizabeth, Eastern Cape",
           createdAt: todayISO(),
         },
         eventType: form.eventType as Lead["eventType"],
@@ -482,7 +482,7 @@ function QuotePage() {
                   id="q-location"
                   value={form.location}
                   onChange={(e) => set("location")(e.target.value)}
-                  placeholder="e.g. Pretoria East"
+                  placeholder="e.g. Port Elizabeth, Eastern Cape"
                 />
               </Field>
             </div>

@@ -104,7 +104,7 @@ export const demoServices: Service[] = [
     id: "delivery",
     name: "Delivery & Setup",
     description:
-      "Delivery, setup, styling and breakdown across Gauteng — you relax, we handle the rest.",
+      "Delivery, setup, styling and breakdown across Port Elizabeth, Eastern Cape — you relax, we handle the rest.",
     startingPrice: 750,
     priceLabel: "from R750",
     image: IMG.weddingVenue,

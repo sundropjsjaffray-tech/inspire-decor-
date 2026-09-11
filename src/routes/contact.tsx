@@ -138,14 +138,13 @@ function ContactPage() {
             {/* Map placeholder */}
             <div
               role="img"
-              aria-label="Service area map placeholder — Gauteng, South Africa"
+              aria-label="Service area map placeholder — Port Elizabeth, Eastern Cape"
               className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-gold-300 bg-gradient-to-br from-champagne-200 via-champagne-100 to-gold-200 p-6 text-center"
             >
               <span aria-hidden="true" className="text-2xl text-gold-600">📍</span>
-              <p className="mt-2 font-display text-lg font-semibold text-ink-900">Gauteng, South Africa</p>
+              <p className="mt-2 font-display text-lg font-semibold text-ink-900">Port Elizabeth, Eastern Cape</p>
               <p className="mt-1 text-xs text-ink-500">
-                Map coming soon — we currently deliver across Johannesburg, Pretoria, Midrand, Centurion
-                and the East Rand.
+                Map coming soon — we currently deliver across Port Elizabeth, Eastern Cape.
               </p>
             </div>
           </div>

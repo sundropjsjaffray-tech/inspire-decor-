@@ -14,7 +14,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Event décor, draping, catering, crockery & equipment hire and full event setup in South Africa.",
+          "Event décor, draping, catering, crockery & equipment hire and full event setup in Port Elizabeth, Eastern Cape.",
       },
     ],
     links: [

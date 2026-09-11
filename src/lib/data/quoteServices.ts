@@ -20,7 +20,7 @@ export const demoQuoteServices: QuoteService[] = [
   {
     id: "delivery",
     name: "Delivery",
-    description: "Delivery and collection of all hired items (Gauteng).",
+    description: "Delivery and collection of all hired items (Port Elizabeth, Eastern Cape).",
     unit: "per event",
     unitPrice: 1500,
     isDemo: true,
