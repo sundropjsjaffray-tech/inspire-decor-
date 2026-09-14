@@ -1,0 +1,1 @@
+import{c as r,d as e,e as s}from"./index-BV-t7Mo5.js";function n(t){const o=r();return e(o.stores.location,s(t,o))}const c="Demonstration data — sample records for preview only, not real client information.",u="DEMO";export{c as D,u as a,n as u};

@@ -9,52 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ServicesRouteImport } from './routes/services'
-import { Route as QuoteRouteImport } from './routes/quote'
-import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as CorporateRouteImport } from './routes/corporate'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as ConsultationRouteImport } from './routes/consultation'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as HireIndexRouteImport } from './routes/hire/index'
+import { Route as ConsultationRouteImport } from './routes/consultation'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CorporateRouteImport } from './routes/corporate'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as QuoteRouteImport } from './routes/quote'
+import { Route as ServicesRouteImport } from './routes/services'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as HireCategoryRouteImport } from './routes/hire/$category'
-import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
-import { Route as DashboardQuotesRouteImport } from './routes/dashboard/quotes'
-import { Route as DashboardLeadsRouteImport } from './routes/dashboard/leads'
-import { Route as DashboardInventoryRouteImport } from './routes/dashboard/inventory'
-import { Route as DashboardEventsRouteImport } from './routes/dashboard/events'
 import { Route as DashboardBookingsRouteImport } from './routes/dashboard/bookings'
+import { Route as DashboardEventsRouteImport } from './routes/dashboard/events'
+import { Route as DashboardInventoryRouteImport } from './routes/dashboard/inventory'
+import { Route as DashboardLeadsRouteImport } from './routes/dashboard/leads'
+import { Route as DashboardQuotesRouteImport } from './routes/dashboard/quotes'
+import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
+import { Route as HireIndexRouteImport } from './routes/hire/index'
+import { Route as HireCategoryRouteImport } from './routes/hire/$category'
 
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuoteRoute = QuoteRouteImport.update({
-  id: '/quote',
-  path: '/quote',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CorporateRoute = CorporateRouteImport.update({
-  id: '/corporate',
-  path: '/corporate',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsultationRoute = ConsultationRouteImport.update({
@@ -62,14 +37,34 @@ const ConsultationRoute = ConsultationRouteImport.update({
   path: '/consultation',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HireIndexRoute = HireIndexRouteImport.update({
-  id: '/hire/',
-  path: '/hire/',
+const CorporateRoute = CorporateRouteImport.update({
+  id: '/corporate',
+  path: '/corporate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuoteRoute = QuoteRouteImport.update({
+  id: '/quote',
+  path: '/quote',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -77,29 +72,9 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
-const HireCategoryRoute = HireCategoryRouteImport.update({
-  id: '/hire/$category',
-  path: '/hire/$category',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardReportsRoute = DashboardReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardQuotesRoute = DashboardQuotesRouteImport.update({
-  id: '/quotes',
-  path: '/quotes',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardLeadsRoute = DashboardLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardInventoryRoute = DashboardInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
+const DashboardBookingsRoute = DashboardBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardEventsRoute = DashboardEventsRouteImport.update({
@@ -107,10 +82,35 @@ const DashboardEventsRoute = DashboardEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardBookingsRoute = DashboardBookingsRouteImport.update({
-  id: '/bookings',
-  path: '/bookings',
+const DashboardInventoryRoute = DashboardInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
   getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardLeadsRoute = DashboardLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardQuotesRoute = DashboardQuotesRouteImport.update({
+  id: '/quotes',
+  path: '/quotes',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReportsRoute = DashboardReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const HireIndexRoute = HireIndexRouteImport.update({
+  id: '/hire/',
+  path: '/hire/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HireCategoryRoute = HireCategoryRouteImport.update({
+  id: '/hire/$category',
+  path: '/hire/$category',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -244,46 +244,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quote': {
-      id: '/quote'
-      path: '/quote'
-      fullPath: '/quote'
-      preLoaderRoute: typeof QuoteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/corporate': {
-      id: '/corporate'
-      path: '/corporate'
-      fullPath: '/corporate'
-      preLoaderRoute: typeof CorporateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/consultation': {
@@ -293,18 +258,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsultationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hire/': {
-      id: '/hire/'
-      path: '/hire'
-      fullPath: '/hire/'
-      preLoaderRoute: typeof HireIndexRouteImport
+    '/corporate': {
+      id: '/corporate'
+      path: '/corporate'
+      fullPath: '/corporate'
+      preLoaderRoute: typeof CorporateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quote': {
+      id: '/quote'
+      path: '/quote'
+      fullPath: '/quote'
+      preLoaderRoute: typeof QuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -314,39 +307,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/hire/$category': {
-      id: '/hire/$category'
-      path: '/hire/$category'
-      fullPath: '/hire/$category'
-      preLoaderRoute: typeof HireCategoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/reports': {
-      id: '/dashboard/reports'
-      path: '/reports'
-      fullPath: '/dashboard/reports'
-      preLoaderRoute: typeof DashboardReportsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/quotes': {
-      id: '/dashboard/quotes'
-      path: '/quotes'
-      fullPath: '/dashboard/quotes'
-      preLoaderRoute: typeof DashboardQuotesRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/leads': {
-      id: '/dashboard/leads'
-      path: '/leads'
-      fullPath: '/dashboard/leads'
-      preLoaderRoute: typeof DashboardLeadsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/inventory': {
-      id: '/dashboard/inventory'
-      path: '/inventory'
-      fullPath: '/dashboard/inventory'
-      preLoaderRoute: typeof DashboardInventoryRouteImport
+    '/dashboard/bookings': {
+      id: '/dashboard/bookings'
+      path: '/bookings'
+      fullPath: '/dashboard/bookings'
+      preLoaderRoute: typeof DashboardBookingsRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/events': {
@@ -356,12 +321,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardEventsRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/bookings': {
-      id: '/dashboard/bookings'
-      path: '/bookings'
-      fullPath: '/dashboard/bookings'
-      preLoaderRoute: typeof DashboardBookingsRouteImport
+    '/dashboard/inventory': {
+      id: '/dashboard/inventory'
+      path: '/inventory'
+      fullPath: '/dashboard/inventory'
+      preLoaderRoute: typeof DashboardInventoryRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/leads': {
+      id: '/dashboard/leads'
+      path: '/leads'
+      fullPath: '/dashboard/leads'
+      preLoaderRoute: typeof DashboardLeadsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/quotes': {
+      id: '/dashboard/quotes'
+      path: '/quotes'
+      fullPath: '/dashboard/quotes'
+      preLoaderRoute: typeof DashboardQuotesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/reports': {
+      id: '/dashboard/reports'
+      path: '/reports'
+      fullPath: '/dashboard/reports'
+      preLoaderRoute: typeof DashboardReportsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/hire/': {
+      id: '/hire/'
+      path: '/hire'
+      fullPath: '/hire/'
+      preLoaderRoute: typeof HireIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hire/$category': {
+      id: '/hire/$category'
+      path: '/hire/$category'
+      fullPath: '/hire/$category'
+      preLoaderRoute: typeof HireCategoryRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

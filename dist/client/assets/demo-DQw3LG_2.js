@@ -1,1 +1,0 @@
-import{u as r,a,b as s}from"./index-DFif4fWA.js";function n(t){const o=r();return a(o.stores.location,s(t,o))}const u="Demonstration data — sample records for preview only, not real client information.",i="DEMO";export{u as D,i as a,n as u};
