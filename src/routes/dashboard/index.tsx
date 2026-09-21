@@ -259,6 +259,7 @@ function DashboardHomePage() {
   );
 }
 
-function stockAvail(item: { total: number; reserved: number; outOnHire: number; damaged: number; missing: number }): number {
+function stockAvail(item: { total: number | null; reserved: number; outOnHire: number; damaged: number; missing: number }): number | null {
+  if (item.total === null) return null;
   return Math.max(0, item.total - item.reserved - item.outOnHire - item.damaged - item.missing);
 }

@@ -17,7 +17,7 @@ export interface ProductCardProps {
  */
 export function ProductCard({ product, categoryName, categoryImage }: ProductCardProps) {
   const available = product.quantityAvailable;
-  const outOfStock = available <= 0;
+  const outOfStock = available === null || available <= 0 || product.hirePrice === null;
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,7 +60,7 @@ export function ProductCard({ product, categoryName, categoryImage }: ProductCar
         <p className="text-xs text-ink-400">
           {product.unit} · per day · VAT incl. ·{" "}
           <span className={outOfStock ? "font-semibold text-red-600" : available <= 5 ? "font-semibold text-amber-600" : "text-ink-500"}>
-            {outOfStock ? "no stock" : `${available} available`}
+            {available === null ? "stock TBC" : outOfStock ? "unavailable" : `${available} available`}
           </span>
         </p>
         <div className="mt-auto flex items-center gap-2 pt-2">
@@ -80,8 +80,8 @@ export function ProductCard({ product, categoryName, categoryImage }: ProductCar
             <button
               type="button"
               aria-label={`Increase quantity of ${product.name}`}
-              disabled={qty >= available || outOfStock}
-              onClick={() => setQty((q) => Math.min(available, q + 1))}
+              disabled={qty >= (available ?? 0) || outOfStock}
+              onClick={() => setQty((q) => Math.min(available ?? 0, q + 1))}
               className="px-2.5 py-1.5 text-sm text-ink-600 transition-colors hover:bg-ink-100 disabled:opacity-40"
             >
               +

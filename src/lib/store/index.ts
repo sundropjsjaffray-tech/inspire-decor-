@@ -1,9 +1,8 @@
 /**
  * Client store (zustand + persist).
  *
- * Holds every mutable piece of business state and persists it to localStorage
- * so the demo workflow survives reloads. Seeded from the mock data modules on
- * first load; `resetDemoData()` restores the seed at any time.
+ * Holds the demo workflow state and UI cache. Inventory is read and mutated
+ * through server functions; it is intentionally not persisted to localStorage.
  *
  * Components must NOT write to this store directly for business operations —
  * they go through `~/lib/services`, which is the seam that Supabase will
@@ -22,6 +21,7 @@ import type {
   EnquiryLine,
   Event,
   InventoryItem,
+  StockMovement,
   Lead,
   Notification,
   Quote,
@@ -33,6 +33,7 @@ export interface AppState {
   quotes: Quote[];
   bookings: Booking[];
   inventory: InventoryItem[];
+  stockMovements: StockMovement[];
   events: Event[];
   /** The customer's "add to enquiry" hire selection. */
   enquiryList: EnquiryLine[];
@@ -46,6 +47,7 @@ export interface AppState {
   addBooking: (booking: Booking) => void;
   updateBooking: (id: string, patch: Partial<Booking>) => void;
   updateInventoryItem: (id: string, patch: Partial<InventoryItem>) => void;
+  addStockMovement: (movement: StockMovement) => void;
   addToEnquiry: (productId: string, quantity: number) => void;
   updateEnquiryLine: (productId: string, quantity: number) => void;
   removeFromEnquiry: (productId: string) => void;
@@ -61,6 +63,7 @@ const initialData = {
   quotes: demoQuotes,
   bookings: demoBookings,
   inventory: demoInventory,
+  stockMovements: [],
   events: demoEvents,
   enquiryList: [] as EnquiryLine[],
   notifications: demoNotifications,
@@ -91,8 +94,10 @@ export const useStore = create<AppState>()(
 
       updateInventoryItem: (id, patch) =>
         set((s) => ({
-          inventory: s.inventory.map((i) => (i.id === id ? { ...i, ...patch } : i)),
+          inventory: s.inventory.map((i) => (i.id === id ? { ...i, ...patch, updatedAt: new Date().toISOString() } : i)),
         })),
+      addStockMovement: (movement) =>
+        set((s) => ({ stockMovements: [movement, ...s.stockMovements] })),
 
       addToEnquiry: (productId, quantity) =>
         set((s) => {
@@ -131,6 +136,7 @@ export const useStore = create<AppState>()(
           quotes: demoQuotes.map((q) => ({ ...q })),
           bookings: demoBookings.map((b) => ({ ...b })),
           inventory: demoInventory.map((i) => ({ ...i })),
+          stockMovements: [],
           events: demoEvents.map((e) => ({ ...e })),
           enquiryList: [],
           notifications: demoNotifications.map((n) => ({ ...n })),
@@ -138,9 +144,9 @@ export const useStore = create<AppState>()(
     }),
     {
       name: "inspire-decor-store",
-      // v2: seed data changed (matric-farewell lead + structured lead fields) —
+      // v3: replace demo inventory with the real client catalogue —
       // discard any v1 localStorage so returning visitors get the new seed.
-      version: 2,
+      version: 3,
       // localStorage is unavailable during SSR — zustand falls back to a no-op
       // storage on the server, so this is safe in the TanStack Start pipeline.
       storage: createJSONStorage(() => localStorage),
@@ -149,7 +155,6 @@ export const useStore = create<AppState>()(
         leads: s.leads,
         quotes: s.quotes,
         bookings: s.bookings,
-        inventory: s.inventory,
         events: s.events,
         enquiryList: s.enquiryList,
         notifications: s.notifications,

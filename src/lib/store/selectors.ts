@@ -19,6 +19,7 @@ import type {
   Lead,
   Quote,
 } from "~/lib/types";
+import { demoProducts } from "~/lib/data/products";
 
 // ---------------------------------------------------------------------------
 // Headline stats
@@ -52,7 +53,10 @@ export const selectUpcomingEventsList = (s: AppState): Event[] =>
 export const selectUpcomingEvents = (s: AppState): number => selectUpcomingEventsList(s).length;
 
 export const selectLowStockItems = (s: AppState): InventoryItem[] =>
-  s.inventory.filter((i) => availableCount(i) <= (i.reorderLevel ?? 0));
+  s.inventory.filter((i) => {
+    const available = availableCount(i);
+    return available !== null && available <= (i.reorderLevel ?? 0);
+  });
 
 export const selectOutstandingPayments = (s: AppState): number =>
   s.bookings
@@ -199,12 +203,12 @@ export const selectMonthlyAverageValueSeries = (s: AppState, months = 6): MonthP
 export const selectInventoryTotals = (s: AppState) => {
   const totals = { total: 0, reserved: 0, available: 0, outOnHire: 0, damaged: 0, missing: 0 };
   for (const i of s.inventory) {
-    totals.total += i.total;
+    totals.total += i.total ?? 0;
     totals.reserved += i.reserved;
     totals.outOnHire += i.outOnHire;
     totals.damaged += i.damaged;
     totals.missing += i.missing;
-    totals.available += availableCount(i);
+    totals.available += availableCount(i) ?? 0;
   }
   return totals;
 };
@@ -231,14 +235,19 @@ export const selectReservationsByItemName = (
     if (!quote) continue;
     for (const line of quote.items) {
       if (line.type !== "product") continue;
-      const existing = byItem.get(line.name) ?? [];
+      const product = demoProducts.find((entry) => entry.id === line.refId);
+      const inventoryItem = product
+        ? s.inventory.find((entry) => entry.id === product.inventoryItemId)
+        : s.inventory.find((entry) => entry.name === line.name);
+      const key = inventoryItem?.name ?? line.name;
+      const existing = byItem.get(key) ?? [];
       existing.push({
         bookingId: booking.id,
         bookingName: booking.eventName,
         eventDate: booking.eventDate,
         quantity: line.quantity,
       });
-      byItem.set(line.name, existing);
+      byItem.set(key, existing);
     }
   }
   return byItem;
@@ -249,7 +258,7 @@ export const selectInventoryUtilisationByCategory = (s: AppState) => {
   const per = new Map<string, { total: number; inUse: number }>();
   for (const i of s.inventory) {
     const cur = per.get(i.category) ?? { total: 0, inUse: 0 };
-    cur.total += i.total;
+    cur.total += i.total ?? 0;
     cur.inUse += i.reserved + i.outOnHire;
     per.set(i.category, cur);
   }

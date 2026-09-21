@@ -3,55 +3,53 @@
  * Reserve/release mutate `reserved`; available stock is always derived
  * (see availableCount in ~/lib/util).
  */
-import { useStore } from "~/lib/store";
-import { availableCount, delay } from "~/lib/util";
-import type { InventoryItem } from "~/lib/types";
+import { getInventoryItems, getInventoryItem, getInventoryVariants, updateInventoryItem as updateInventoryItemOnServer, updateInventoryVariant as updateInventoryVariantOnServer, adjustStock as adjustStockOnServer, getStockHistory as getStockHistoryOnServer } from "~/lib/server/inventory";
+import type { InventoryItem, InventoryVariant, StockMovement } from "~/lib/types";
 
 export async function getInventory(): Promise<InventoryItem[]> {
-  await delay();
-  return useStore.getState().inventory;
+  return getInventoryItems();
 }
 
 export async function getLowStockItems(): Promise<InventoryItem[]> {
-  await delay(250);
-  const state = useStore.getState();
-  return state.inventory.filter((i) => availableCount(i) <= (i.reorderLevel ?? 0));
+  const inventory = await getInventoryItems();
+  return inventory.filter((item) => item.total !== null && item.total - item.reserved - item.outOnHire - item.damaged - item.missing <= (item.reorderLevel ?? 0));
 }
 
 export async function reserveInventory(itemId: string, quantity: number): Promise<InventoryItem> {
-  await delay(250);
-  const state = useStore.getState();
-  const item = state.inventory.find((i) => i.id === itemId);
-  if (!item) throw new Error(`Inventory item not found: ${itemId}`);
-  const available = availableCount(item);
-  if (quantity > available) {
-    throw new Error(
-      `Insufficient stock for ${item.name}: requested ${quantity}, available ${available}`
-    );
-  }
-  state.updateInventoryItem(itemId, { reserved: item.reserved + quantity });
-  return { ...item, reserved: item.reserved + quantity };
+  void itemId;
+  void quantity;
+  throw new Error("Inventory reservations are not enabled yet. A quote does not reserve stock.");
 }
 
 export async function releaseInventory(itemId: string, quantity: number): Promise<InventoryItem> {
-  await delay(250);
-  const state = useStore.getState();
-  const item = state.inventory.find((i) => i.id === itemId);
-  if (!item) throw new Error(`Inventory item not found: ${itemId}`);
-  state.updateInventoryItem(itemId, {
-    reserved: Math.max(0, item.reserved - quantity),
-  });
-  return { ...item, reserved: Math.max(0, item.reserved - quantity) };
+  void itemId;
+  void quantity;
+  throw new Error("Inventory reservations are not enabled yet.");
 }
 
 export async function updateInventory(
   itemId: string,
-  patch: Partial<Pick<InventoryItem, "total" | "reserved" | "outOnHire" | "damaged" | "missing" | "reorderLevel">>
+  patch: Partial<Pick<InventoryItem, "total" | "reserved" | "outOnHire" | "damaged" | "missing" | "reorderLevel" | "basePrice" | "active" | "description" | "name" | "category" | "pricingUnit" | "variants">>
 ): Promise<InventoryItem> {
-  await delay(250);
-  const state = useStore.getState();
-  const item = state.inventory.find((i) => i.id === itemId);
-  if (!item) throw new Error(`Inventory item not found: ${itemId}`);
-  state.updateInventoryItem(itemId, patch);
-  return { ...item, ...patch };
+  return updateInventoryItemOnServer({ data: { id: itemId, ...patch } });
+}
+
+export async function getInventoryById(itemId: string): Promise<InventoryItem | null> {
+  return getInventoryItem({ data: itemId });
+}
+
+export async function getVariants(itemId: string): Promise<InventoryVariant[]> {
+  return getInventoryVariants({ data: itemId });
+}
+
+export async function updateVariant(variant: InventoryVariant): Promise<InventoryVariant | null> {
+  return updateInventoryVariantOnServer({ data: variant });
+}
+
+export async function adjustInventory(itemId: string, damaged: number, missing: number, notes?: string): Promise<InventoryItem | null> {
+  return adjustStockOnServer({ data: { id: itemId, damaged, missing, notes } });
+}
+
+export async function getStockHistory(itemId: string): Promise<StockMovement[]> {
+  return getStockHistoryOnServer({ data: itemId });
 }

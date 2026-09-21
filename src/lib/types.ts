@@ -101,20 +101,23 @@ export type ServiceOption =
   | "flowers"
   | "collection";
 
-/** The 12 hire catalogue categories. */
+/** Extensible hire catalogue categories used by inventory and products. */
 export type CategoryId =
   | "crockery"
   | "cutlery"
   | "glassware"
-  | "tables"
-  | "chairs"
   | "linen"
-  | "chair-covers"
-  | "decor"
+  | "catering-platters"
+  | "catering-stands"
+  | "food-warmers"
+  | "chairs"
+  | "tables"
+  | "furniture-decor"
   | "backdrops"
-  | "draping"
   | "centrepieces"
-  | "serving-equipment";
+  | "tents"
+  | "lighting"
+  | "other";
 
 /** Corporate enquiry / lead event types. */
 export type CorporateEventType =
@@ -211,18 +214,52 @@ export interface Category {
   image?: string;
 }
 
+export type PricingUnit = "each" | "per set" | "per metre" | "per event";
+
+export interface InventoryVariant {
+  id: string;
+  inventoryItemId: string;
+  variantName: string;
+  stockQuantity: number | null;
+  active: boolean;
+}
+
+export type StockMovementType =
+  | "INITIAL_STOCK"
+  | "STOCK_ADJUSTMENT"
+  | "RESERVED"
+  | "RELEASED"
+  | "CHECKED_OUT"
+  | "RETURNED"
+  | "DAMAGED"
+  | "MISSING"
+  | "CORRECTION";
+
+export interface StockMovement {
+  id: string;
+  inventoryItemId: string;
+  variantId?: string;
+  movementType: StockMovementType;
+  quantity: number;
+  referenceType?: string;
+  referenceId?: string;
+  notes?: string;
+  createdAt: string;
+}
+
 /** A hire product in the public catalogue. */
 export interface Product {
   id: string;
+  inventoryItemId: string;
   name: string;
   category: CategoryId;
   description: string;
   /** Rand per unit, per event. */
-  hirePrice: number;
+  hirePrice: number | null;
   /** Human unit, e.g. "per plate", "per metre". */
   unit: string;
   /** Currently hireable stock. */
-  quantityAvailable: number;
+  quantityAvailable: number | null;
   image?: string;
   featured?: boolean;
   isDemo: boolean;
@@ -299,11 +336,18 @@ export interface InventoryItem {
   id: string;
   name: string;
   category: CategoryId;
-  total: number;
+  description: string;
+  basePrice: number | null;
+  pricingUnit: PricingUnit;
+  total: number | null;
   reserved: number; // booked for upcoming events
   outOnHire: number; // physically with a client right now
   damaged: number;
   missing: number;
+  active: boolean;
+  variants: InventoryVariant[];
+  createdAt: string;
+  updatedAt: string;
   /** Below this available count the item is flagged as low stock. */
   reorderLevel?: number;
   isDemo: boolean;

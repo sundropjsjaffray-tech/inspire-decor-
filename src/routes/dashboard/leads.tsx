@@ -315,7 +315,7 @@ function LeadDetail({
 
   const enquiryTotal = (lead.enquiryLines ?? []).reduce((sum, line) => {
     const p = products.find((pr) => pr.id === line.productId);
-    return sum + (p ? p.hirePrice * line.quantity : 0);
+    return sum + (p?.hirePrice ? p.hirePrice * line.quantity : 0);
   }, 0);
 
   const statusMeta = leadStatusMeta[lead.status];
@@ -459,7 +459,7 @@ function LeadDetail({
                       <td className="px-3 py-2 text-ink-800">{p?.name ?? line.productId}</td>
                       <td className="px-3 py-2 text-right text-ink-700">{line.quantity}</td>
                       <td className="px-3 py-2 text-right font-medium text-ink-900">
-                        {p ? `R ${p.hirePrice * line.quantity}` : "—"}
+                        {p?.hirePrice ? `R ${p.hirePrice * line.quantity}` : "TBC"}
                       </td>
                     </tr>
                   );

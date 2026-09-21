@@ -30,7 +30,7 @@ import { QuoteDocument } from "./QuoteDocument";
 import { getProducts } from "~/lib/services/products";
 import { getQuoteServices, createQuote, updateQuoteStatus } from "~/lib/services/quotes";
 import { useStore } from "~/lib/store";
-import { availableCount, cn, formatZAR } from "~/lib/util";
+import { cn, formatZAR } from "~/lib/util";
 import type { ContactDetails } from "~/lib/data/site";
 import type { Product, Quote, QuoteService } from "~/lib/types";
 
@@ -49,7 +49,6 @@ const SERVICE_FEE_IDS = new Set(["setup", "delivery"]);
 
 export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderProps) {
   const leads = useStore((s) => s.leads);
-  const inventory = useStore((s) => s.inventory);
 
   const [products, setProducts] = useState<Product[] | null>(null);
   const [services, setServices] = useState<QuoteService[] | null>(null);
@@ -82,13 +81,6 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
 
   const lead = useMemo(() => leads.find((l) => l.id === leadId), [leads, leadId]);
 
-  // Live available stock, matched by name from the store's inventory.
-  const availableFor = (name: string): number => {
-    const item = inventory.find((i) => i.name === name);
-    if (!item) return 0;
-    return availableCount(item);
-  };
-
   // Prefill from the lead (enquiry cart + a sensible setup/delivery default).
   const selectLead = (id: string) => {
     setLeadId(id);
@@ -99,7 +91,7 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
     for (const line of l.enquiryLines ?? []) {
       const p = products.find((pr) => pr.id === line.productId);
       if (!p) continue;
-      const max = availableFor(p.name);
+      const max = p.quantityAvailable ?? 0;
       qtys[p.id] = Math.min(line.quantity, max || line.quantity);
     }
     setProductQtys(qtys);
@@ -129,7 +121,7 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
   const productLines = useMemo(
     () =>
       (products ?? [])
-        .filter((p) => (productQtys[p.id] ?? 0) > 0)
+        .filter((p) => p.hirePrice !== null && (productQtys[p.id] ?? 0) > 0)
         .map((p) => {
           const quantity = productQtys[p.id] ?? 0;
           return {
@@ -137,8 +129,8 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
             refId: p.id,
             name: p.name,
             quantity,
-            unitPrice: p.hirePrice,
-            lineTotal: quantity * p.hirePrice,
+            unitPrice: p.hirePrice as number,
+            lineTotal: quantity * (p.hirePrice as number),
           };
         }),
     [products, productQtys]
@@ -271,7 +263,7 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
         <ProductPicker
           products={products}
           qtys={productQtys}
-          availableFor={availableFor}
+          availableFor={(product) => product.quantityAvailable ?? 0}
           onChange={(id, qty) => setQty(setProductQtys, id, qty)}
         />
       </Card>
@@ -495,7 +487,7 @@ function ProductPicker({
 }: {
   products: Product[];
   qtys: Record<string, number>;
-  availableFor: (name: string) => number;
+  availableFor: (product: Product) => number;
   onChange: (id: string, qty: number) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -524,7 +516,7 @@ function ProductPicker({
       </div>
       <ul className="max-h-96 divide-y divide-ink-100 overflow-y-auto rounded-lg border border-ink-200">
         {filtered.map((p) => {
-          const available = availableFor(p.name);
+          const available = p.hirePrice === null ? 0 : availableFor(p);
           const qty = qtys[p.id] ?? 0;
           const shortage = qty > available;
           return (
@@ -552,7 +544,7 @@ function ProductPicker({
                 onChange={(v) => onChange(p.id, v)}
               />
               <span className="w-24 text-right font-semibold text-ink-900">
-                {formatZAR(Math.min(qty, available) * p.hirePrice)}
+                {formatZAR(p.hirePrice === null ? null : Math.min(qty, available) * p.hirePrice)}
               </span>
             </li>
           );

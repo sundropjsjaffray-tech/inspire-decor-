@@ -9,6 +9,7 @@ import type { Booking, Quote, QuoteItem, QuoteService, QuoteStatus } from "~/lib
 import { createBooking } from "./bookings";
 import { reserveInventory } from "./inventory";
 import { demoQuoteServices } from "~/lib/data/quoteServices";
+import { demoProducts } from "~/lib/data/products";
 
 export interface QuoteLineInput {
   type: QuoteItem["type"];
@@ -108,15 +109,18 @@ export async function convertQuoteToBooking(quoteId: string): Promise<Booking> {
 
   const lead = state.leads.find((l) => l.id === quote.leadId);
 
-  // Reserve stock for product lines. Products and inventory items share names
-  // (see lib/data), so we can match by name. Items with no warehouse record
-  // (e.g. services) are skipped. A line that can't be fully reserved is
+  // Reserve stock for product lines through stable product -> inventory IDs.
+  // The name fallback keeps older demo quotes readable during the transition.
+  // Items with no warehouse record (e.g. services) are skipped. A line that can't be fully reserved is
   // reported rather than failing the whole conversion — the booking still
   // stands and the business sources more stock.
   const unavailable: string[] = [];
   for (const line of quote.items) {
     if (line.type !== "product") continue;
-    const inventoryItem = state.inventory.find((i) => i.name === line.name);
+    const product = demoProducts.find((entry) => entry.id === line.refId);
+    const inventoryItem = product
+      ? state.inventory.find((entry) => entry.id === product.inventoryItemId)
+      : state.inventory.find((entry) => entry.name === line.name);
     if (inventoryItem) {
       try {
         await reserveInventory(inventoryItem.id, line.quantity);

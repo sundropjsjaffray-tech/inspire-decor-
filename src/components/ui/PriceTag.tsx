@@ -2,7 +2,7 @@ import { formatZAR } from "~/lib/util";
 import { cn } from "~/lib/util";
 
 export interface PriceTagProps {
-  amount: number;
+  amount: number | null;
   className?: string;
   /** Small prefix text before the price, e.g. "from". */
   prefix?: string;
@@ -11,7 +11,7 @@ export interface PriceTagProps {
 }
 
 export function PriceTag({ amount, className, prefix, custom = false }: PriceTagProps) {
-  if (custom) {
+  if (custom || amount === null) {
     return <span className={cn("font-semibold text-ink-600", className)}>Custom Quote</span>;
   }
   return (

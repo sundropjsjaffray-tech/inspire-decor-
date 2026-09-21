@@ -43,7 +43,7 @@ export function EnquiryWidget() {
     .map((line) => {
       const product = byId.get(line.productId);
       if (!product) return null;
-      return { product, quantity: line.quantity, lineTotal: product.hirePrice * line.quantity };
+      return { product, quantity: line.quantity, lineTotal: product.hirePrice === null ? null : product.hirePrice * line.quantity };
     })
     .filter((l): l is Line => l !== null);
 

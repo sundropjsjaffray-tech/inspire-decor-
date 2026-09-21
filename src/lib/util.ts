@@ -42,12 +42,14 @@ export function isWithinCurrentMonth(isoDate: string): boolean {
 /** Available hire stock: total - reserved - outOnHire - damaged - missing. */
 export function availableCount(
   item: Pick<InventoryItem, "total" | "reserved" | "outOnHire" | "damaged" | "missing">
-): number {
+): number | null {
+  if (item.total === null) return null;
   return Math.max(0, item.total - item.reserved - item.outOnHire - item.damaged - item.missing);
 }
 
 /** Format a number as ZAR ("R 1 250") using Intl. */
-export function formatZAR(amount: number): string {
+export function formatZAR(amount: number | null): string {
+  if (amount === null) return "TBC";
   return new Intl.NumberFormat("en-ZA", {
     style: "currency",
     currency: "ZAR",
