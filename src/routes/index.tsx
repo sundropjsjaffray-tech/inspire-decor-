@@ -24,7 +24,7 @@ function HomePage() {
     let alive = true;
     Promise.all([
       getServices(),
-      getProducts(),
+      getProducts().catch(() => []),
       getCategories(),
       getGallery(),
       getTestimonials(),
