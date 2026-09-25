@@ -443,11 +443,13 @@ function QtyStepper({
   label,
   value,
   max,
+  min = 0,
   onChange,
 }: {
   label: string;
   value: number;
   max: number;
+  min?: number;
   onChange: (value: number) => void;
 }) {
   return (
@@ -458,7 +460,7 @@ function QtyStepper({
         size="sm"
         aria-label={`Decrease ${label}`}
         onClick={() => onChange(value - 1)}
-        disabled={value <= 0}
+        disabled={value <= min}
       >
         −
       </Button>
@@ -541,8 +543,19 @@ function ProductPicker({
                 label={`${p.name} quantity`}
                 value={Math.min(qty, available)}
                 max={available}
+                min={1}
                 onChange={(v) => onChange(p.id, v)}
               />
+              {qty > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onChange(p.id, 0)}
+                >
+                  Remove
+                </Button>
+              )}
               <span className="w-24 text-right font-semibold text-ink-900">
                 {formatZAR(p.hirePrice === null ? null : Math.min(qty, available) * p.hirePrice)}
               </span>
