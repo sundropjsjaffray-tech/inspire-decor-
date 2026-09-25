@@ -278,6 +278,7 @@ export interface QuoteItem {
 
 export interface Quote {
   id: string;
+  quotationNumber?: string;
   leadId: string;
   customerId: string;
   items: QuoteItem[];
@@ -289,8 +290,10 @@ export interface Quote {
   total: number; // subtotal + deliveryFee + setupFee - discount
   status: QuoteStatus;
   notes?: string;
+  termsAndConditions?: string;
   validUntil?: string; // ISO date
   createdAt: string; // ISO datetime
+  updatedAt?: string; // ISO datetime
   isDemo: boolean;
 }
 

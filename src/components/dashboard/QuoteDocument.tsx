@@ -7,6 +7,7 @@
  */
 import { Card } from "~/components/ui";
 import { quoteDefaults } from "~/lib/data/quoteServices";
+import { quoteTerms } from "~/lib/data/business";
 import { eventTypeLabels } from "~/lib/statusLabels";
 import { formatDate, formatZAR } from "~/lib/util";
 import type { Lead, Quote, QuoteItem } from "~/lib/types";
@@ -55,12 +56,13 @@ export function QuoteDocument({ quote, lead, contact }: QuoteDocumentProps) {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-xs uppercase tracking-widest text-gold-400">Quote</p>
-          <p className="font-display text-2xl font-semibold">{quote.id}</p>
+          <p className="text-xs uppercase tracking-widest text-gold-400">Quotation</p>
+          <p className="font-display text-2xl font-semibold">{quote.quotationNumber ?? quote.id}</p>
           <p className="mt-1 text-xs text-ink-400">
             {formatDate(quote.createdAt)}
             {quote.validUntil && <> · Valid until {formatDate(quote.validUntil)}</>}
           </p>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gold-300">{quote.status}</p>
         </div>
       </div>
 
@@ -168,6 +170,13 @@ export function QuoteDocument({ quote, lead, contact }: QuoteDocumentProps) {
             <span>{formatZAR(balance)}</span>
           </div>
         </div>
+      </div>
+
+      <div className="border-t border-ink-200 px-6 py-5">
+        <p className="text-xs font-semibold uppercase tracking-wider text-ink-400">Terms and conditions</p>
+        <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-ink-500">
+          {quote.termsAndConditions ?? quoteTerms}
+        </p>
       </div>
 
       {/* Footer */}

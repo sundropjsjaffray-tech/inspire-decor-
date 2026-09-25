@@ -11,7 +11,7 @@
  *
  * All business data comes from services/data modules — nothing hard-coded.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Badge,
   Button,
@@ -28,7 +28,7 @@ import {
 import { quoteDefaults } from "~/lib/data/quoteServices";
 import { QuoteDocument } from "./QuoteDocument";
 import { getProducts } from "~/lib/services/products";
-import { getQuoteServices, createQuote, updateQuoteStatus } from "~/lib/services/quotes";
+import { getQuoteServices, createQuote, updateQuote } from "~/lib/services/quotes";
 import { useStore } from "~/lib/store";
 import { cn, formatZAR } from "~/lib/util";
 import type { ContactDetails } from "~/lib/data/site";
@@ -36,6 +36,7 @@ import type { Product, Quote, QuoteService } from "~/lib/types";
 
 export interface QuoteBuilderProps {
   initialLeadId?: string;
+  initialQuote?: Quote;
   contact?: ContactDetails;
   onBack: () => void;
 }
@@ -47,20 +48,22 @@ interface DiscountState {
 
 const SERVICE_FEE_IDS = new Set(["setup", "delivery"]);
 
-export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderProps) {
+export function QuoteBuilder({ initialLeadId, initialQuote, contact, onBack }: QuoteBuilderProps) {
   const leads = useStore((s) => s.leads);
 
   const [products, setProducts] = useState<Product[] | null>(null);
   const [services, setServices] = useState<QuoteService[] | null>(null);
-  const [leadId, setLeadId] = useState<string>(initialLeadId ?? "");
+  const [leadId, setLeadId] = useState<string>(initialQuote?.leadId ?? initialLeadId ?? "");
   const [productQtys, setProductQtys] = useState<Record<string, number>>({});
   const [serviceQtys, setServiceQtys] = useState<Record<string, number>>({});
   const [servicePrices, setServicePrices] = useState<Record<string, number>>({});
-  const [discount, setDiscount] = useState<DiscountState>({ type: "rand", value: 0 });
-  const [notes, setNotes] = useState("");
+  const [productPrices, setProductPrices] = useState<Record<string, number>>({});
+  const [discount, setDiscount] = useState<DiscountState>({ type: "rand", value: initialQuote?.discount ?? 0 });
+  const [notes, setNotes] = useState(initialQuote?.notes ?? "");
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<Quote | null>(null);
+  const initialisedQuote = useRef(false);
 
   // Load catalogues once.
   useEffect(() => {
@@ -69,6 +72,7 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
       if (!alive) return;
       setProducts(p);
       setServices(sv);
+      setProductPrices(Object.fromEntries(p.flatMap((product) => product.hirePrice === null ? [] : [[product.id, product.hirePrice]])));
       // Seed default prices for delivery/setup from the catalogue.
       const prices: Record<string, number> = {};
       for (const s of sv) prices[s.id] = s.unitPrice;
@@ -78,6 +82,30 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
       alive = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!initialQuote || !products || !services || initialisedQuote.current) return;
+    initialisedQuote.current = true;
+    setLeadId(initialQuote.leadId);
+    setProductQtys(Object.fromEntries(initialQuote.items.filter((item) => item.type === "product").map((item) => [item.refId, item.quantity])));
+    setServiceQtys(Object.fromEntries([
+      ...initialQuote.items.filter((item) => item.type === "service").map((item) => [item.refId, item.quantity]),
+      ...(initialQuote.deliveryFee > 0 ? [["delivery", 1]] : []),
+      ...((initialQuote.setupFee ?? 0) > 0 ? [["setup", 1]] : []),
+    ]));
+    setProductPrices((previous) => ({
+      ...previous,
+      ...Object.fromEntries(initialQuote.items.filter((item) => item.type === "product").map((item) => [item.refId, item.unitPrice])),
+    }));
+    setServicePrices((previous) => ({
+      ...previous,
+      ...Object.fromEntries(initialQuote.items.filter((item) => item.type === "service").map((item) => [item.refId, item.unitPrice])),
+      ...(initialQuote.deliveryFee > 0 ? { delivery: initialQuote.deliveryFee } : {}),
+      ...((initialQuote.setupFee ?? 0) > 0 ? { setup: initialQuote.setupFee ?? 0 } : {}),
+    }));
+    setDiscount({ type: "rand", value: initialQuote.discount });
+    setNotes(initialQuote.notes ?? "");
+  }, [initialQuote, products, services]);
 
   const lead = useMemo(() => leads.find((l) => l.id === leadId), [leads, leadId]);
 
@@ -129,11 +157,11 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
             refId: p.id,
             name: p.name,
             quantity,
-            unitPrice: p.hirePrice as number,
-            lineTotal: quantity * (p.hirePrice as number),
+            unitPrice: productPrices[p.id] ?? (p.hirePrice as number),
+            lineTotal: quantity * (productPrices[p.id] ?? (p.hirePrice as number)),
           };
         }),
-    [products, productQtys]
+    [products, productPrices, productQtys]
   );
 
   const serviceLines = useMemo(
@@ -185,7 +213,7 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
     setGenerating(true);
     setError(null);
     try {
-      const quote = await createQuote({
+      const draft = {
         leadId: lead.id,
         customerId: lead.customer.id,
         items: [...productLines, ...serviceLines],
@@ -196,12 +224,13 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
         validUntil: new Date(Date.now() + quoteDefaults.validDays * 86_400_000)
           .toISOString()
           .slice(0, 10),
-      });
-      // Generating the quote document is the send step in this prototype (the
-      // Resend email seam comes later), so it leaves the builder already SENT —
-      // which is what enables "Convert to Booking" in the quotes list.
-      const sent = await updateQuoteStatus(quote.id, "SENT");
-      setPreview(sent);
+        termsAndConditions: initialQuote?.termsAndConditions,
+        quotationNumber: initialQuote?.quotationNumber,
+      };
+      const saved = initialQuote
+        ? await updateQuote(initialQuote.id, draft)
+        : await createQuote(draft);
+      setPreview(saved);
     } catch {
       setError("Could not create the quote. Please try again.");
     } finally {
@@ -263,6 +292,7 @@ export function QuoteBuilder({ initialLeadId, contact, onBack }: QuoteBuilderPro
         <ProductPicker
           products={products}
           qtys={productQtys}
+          prices={productPrices}
           availableFor={(product) => product.quantityAvailable ?? 0}
           onChange={(id, qty) => setQty(setProductQtys, id, qty)}
         />
@@ -484,11 +514,13 @@ function QtyStepper({
 function ProductPicker({
   products,
   qtys,
+  prices,
   availableFor,
   onChange,
 }: {
   products: Product[];
   qtys: Record<string, number>;
+  prices: Record<string, number>;
   availableFor: (product: Product) => number;
   onChange: (id: string, qty: number) => void;
 }) {
@@ -529,7 +561,7 @@ function ProductPicker({
                   <span className="ml-2 text-xs font-normal text-ink-400">{p.category}</span>
                 </p>
                 <p className="text-xs text-ink-500">
-                  {formatZAR(p.hirePrice)} {p.unit}
+                  {formatZAR(prices[p.id] ?? p.hirePrice)} {p.unit}
                   <span className="mx-1 text-ink-300">·</span>
                   {available} available
                 </p>
@@ -557,7 +589,7 @@ function ProductPicker({
                 </Button>
               )}
               <span className="w-24 text-right font-semibold text-ink-900">
-                {formatZAR(p.hirePrice === null ? null : Math.min(qty, available) * p.hirePrice)}
+                {formatZAR(p.hirePrice === null ? null : Math.min(qty, available) * (prices[p.id] ?? p.hirePrice))}
               </span>
             </li>
           );
