@@ -4,15 +4,15 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "node --env-file-if-exists=.env.local node_modules/vite/bin/vite.js dev",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 4174",
+    "preview": "node --env-file-if-exists=.env.local node_modules/vite/bin/vite.js preview --host 0.0.0.0 --port 4174",
     "start": "bun run serve.ts",
     "publish": "bash ./publish.sh",
     "go-live": "bash ./go-live.sh",
     "format": "prettier --write .",
-    "db:migrate": "tsx scripts/migrate-inventory.ts",
-    "db:seed": "tsx scripts/seed-inventory.ts"
+    "db:migrate": "node --env-file=.env.local node_modules/tsx/dist/cli.mjs scripts/migrate-inventory.ts",
+    "db:seed": "node --env-file=.env.local node_modules/tsx/dist/cli.mjs scripts/seed-inventory.ts"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.36",

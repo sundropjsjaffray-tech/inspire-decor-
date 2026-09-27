@@ -9,6 +9,7 @@ import {
   Modal,
   PageHeader,
   PriceTag,
+  Select,
   Table,
 } from "~/components/ui";
 import { getContactDetails } from "~/lib/services/content";

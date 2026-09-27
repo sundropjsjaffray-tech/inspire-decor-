@@ -62,22 +62,28 @@ export function QuoteBuilder({ initialLeadId, initialQuote, contact, onBack }: Q
   const [notes, setNotes] = useState(initialQuote?.notes ?? "");
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [catalogueError, setCatalogueError] = useState<string | null>(null);
   const [preview, setPreview] = useState<Quote | null>(null);
   const initialisedQuote = useRef(false);
 
   // Load catalogues once.
   useEffect(() => {
     let alive = true;
-    Promise.all([getProducts(), getQuoteServices()]).then(([p, sv]) => {
-      if (!alive) return;
-      setProducts(p);
-      setServices(sv);
-      setProductPrices(Object.fromEntries(p.flatMap((product) => product.hirePrice === null ? [] : [[product.id, product.hirePrice]])));
-      // Seed default prices for delivery/setup from the catalogue.
-      const prices: Record<string, number> = {};
-      for (const s of sv) prices[s.id] = s.unitPrice;
-      setServicePrices(prices);
-    });
+    Promise.all([getProducts(), getQuoteServices()])
+      .then(([p, sv]) => {
+        if (!alive) return;
+        setProducts(p);
+        setServices(sv);
+        setProductPrices(Object.fromEntries(p.flatMap((product) => product.hirePrice === null ? [] : [[product.id, product.hirePrice]])));
+        // Seed default prices for delivery/setup from the catalogue.
+        const prices: Record<string, number> = {};
+        for (const s of sv) prices[s.id] = s.unitPrice;
+        setServicePrices(prices);
+      })
+      .catch((reason: unknown) => {
+        if (!alive) return;
+        setCatalogueError(reason instanceof Error ? reason.message : "The inventory catalogue is unavailable.");
+      });
     return () => {
       alive = false;
     };
@@ -237,6 +243,16 @@ export function QuoteBuilder({ initialLeadId, initialQuote, contact, onBack }: Q
       setGenerating(false);
     }
   };
+
+  if (catalogueError) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-900">
+        <h2 className="font-display text-lg font-semibold">Quote products unavailable</h2>
+        <p className="mt-2 text-sm">Connect the inventory database before creating a quote. No demo products were substituted.</p>
+        <p className="mt-3 break-words text-xs text-red-700">{catalogueError}</p>
+      </div>
+    );
+  }
 
   if (!products || !services) {
     return <LoadingState label="Loading quote builder…" />;
